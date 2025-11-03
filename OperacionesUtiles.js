@@ -27,7 +27,9 @@ function limitarVector(vector,magnitudMaxima){
 function setearMagnitudAVector(vector,nuevaMagnitud){
     const magnitudDelVectorOriginal = Math.hypot(vector.x,vector.y);
 
-    if(magnitudDelVectorOriginal === 0) return {x:0, y: 0};
+   const EPS = 1e-8;
+  if (!Number.isFinite(magnitudDelVectorOriginal) || magnitudDelVectorOriginal < EPS) return { x: 0, y: 0 };
+
 
     const magnitud = Math.abs(nuevaMagnitud)
 
@@ -36,3 +38,30 @@ function setearMagnitudAVector(vector,nuevaMagnitud){
     return {x: vector.x * escala, y: vector.y * escala};
 
 }
+
+function anguloHacia(x1,y1,x2,y2){
+  return Math.atan2(y2 - y1, x2 - x1);
+}
+
+function // Diferencia mínima entre dos ángulos (en valor absoluto)
+deltaAng(a, b){
+  let d = a - b;
+  while (d >  Math.PI) d -= Math.PI*2;
+  while (d < -Math.PI) d += Math.PI*2;
+  return Math.abs(d);
+}
+
+// Distancia al cuadrado (evita sqrt caro)
+function dist2(ax,ay,bx,by){
+  const dx = ax - bx, dy = ay - by;
+  return dx*dx + dy*dy;
+}
+
+function dist2Prota(personaje){  // Utilidad: distancia^2 al jugador
+  const p = personaje && personaje.juego;
+  if (!p) return null;
+  return dist2(owner.posicion.x, owner.posicion.y, p.x, p.y);
+}
+
+
+

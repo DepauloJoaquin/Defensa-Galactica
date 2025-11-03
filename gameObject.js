@@ -15,7 +15,10 @@ class GameObject{
 
     this.container = new PIXI.Container();
    
-    this.container.name = "container"
+    this.container.name = "container";
+
+    this.container.x = x;
+    this.container.y = y;
 
     this.vision = Math.random() * 200 + 1800;
     //guarda una referencia a la instancia del juego
@@ -31,51 +34,101 @@ class GameObject{
    // this.sprite = new PIXI.AnimatedSprite(textureData.animations.caminarAbajo);
 
     this.cargarSpritesAnimados(textureData);
-    this.cambiarAnimacion("caminarAbajo");
+   const tieneAnims   = this.spritesAnimados && Object.keys(this.spritesAnimados).length > 0;
+      const tipo         = this.constructor.name;
+    const REQUERIDAS = {
+  // alien usa estas (las que viste en alienDef.json)
+  Alien: [
+    'idleArriba','idleAbajo','idleIzquierda',
+    'caminarArriba','caminarAbajo','caminarIzquierda',
+    'correrArriba','correrAbajo','correrIzquierda',
+    'atacarArriba','atacarAbajo','atacarIzquierda'
+  ],
+  // prota SOLO tiene estas
+  PersonajePPal: [
+    'idle','caminarDerecha','dispararArriba'
+  ]
+  // otros tipos (Muro, etc.) no tienen anims -> no chequear
+};
 
-    
-   //this.sprite.play();
-   // this.sprite.loop = true;
-   // this.sprite.animationSpeed = 0.1;
-
-    //establezco el punto de pivot en el medio:
-   // this.sprite.anchor.set(0.5);
-
-    //agrego el sprite al stage
-    //this.juego es una referencia a la instancia de la clase Juego
-    //a su vez el juego tiene una propiedad llamada pixiApp, q es la app de PIXI misma,
-    //q a su vez tiene el stage. Y es el Stage de pixi q tiene un metodo para agregar 'hijos'
-    //(el stage es como un container/nodo) //
-   // this.juego.pixiApp.stage.addChild(this.sprite);
-    this.juego.pixiApp.stage.addChild(this.container);
-  }
-
-  cambiarAnimacion(cual){
-    // todos invisibles
-    for(let key of Object.keys(this.spritesAnimados)){
-        this.spritesAnimados[key].visible = false;
+if (tieneAnims && REQUERIDAS[tipo]) {
+  for (const k of REQUERIDAS[tipo]) {
+    if (!this.spritesAnimados[k]) {
+      console.warn(`[ANIM FALTA] ${tipo} id=${this.id}: "${k}"`);
     }
-    // se hace visible el que queremos
-    this.spritesAnimados[cual].visible = true;
   }
+}
+
+
+
+
+
+
+// Elegí la mejor disponible: idle → caminarAbajo → primera que exista
+if (this.spritesAnimados && Object.keys(this.spritesAnimados).length) {
+  if (this.spritesAnimados.idle) this.cambiarAnimacion('idle');
+  else if (this.spritesAnimados.caminarAbajo) this.cambiarAnimacion('caminarAbajo');
+  else {
+    const first = Object.keys(this.spritesAnimados)[0];
+    this.cambiarAnimacion(first);
+  }
+}
+
+// añadir al stage
+(this.juego.containerPrincipal || this.juego.pixiApp.stage).addChild(this.container);
+  }
+
+cambiarAnimacion(cual){
+  if (!this.spritesAnimados || !Object.keys(this.spritesAnimados).length) return;
+
+  
+   if (!this.spritesAnimados[cual]) {
+    if (cual?.startsWith?.('atacar')) {
+      console.warn(`[ANIM ATAQUE INEXISTENTE] "${cual}" en`, this.constructor.name, 'id=', this.id);
+      return; // 
+    }
+    const fallbacks = ['idleAbajo','idleArriba','idleIzquierda','caminarAbajo','caminarArriba','caminarIzquierda'];
+    const fb = fallbacks.find(k => this.spritesAnimados[k]) || this._animActual;
+    if (!fb) return;
+    cual = fb;
+  }
+
+  if (this._animActual === cual) return;
+   const next = this.spritesAnimados[cual];
+   if (!next) return; 
+
+  if (this._animActual && this.spritesAnimados[this._animActual]) {
+  const prev = this.spritesAnimados[this._animActual];
+  prev.stop?.();
+  prev.visible = false;
+}
+
+
+const target = this.spritesAnimados[cual];
+if (target) {
+  target.visible = true;
+  target.gotoAndPlay?.(0); 
+  this._animActual = cual;
+}
+}
+
 
 
   cargarSpritesAnimados(textureData){
-    for(let key of Object.keys(textureData.animations)){
-        this.spritesAnimados[key] = new PIXI.AnimatedSprite(textureData.animations[key]);
+  this.spritesAnimados = {};
 
+  const anims = textureData && textureData.animations;
+  if (!anims) return; 
 
-        this.spritesAnimados[key].play();
-        this.spritesAnimados[key].loop = true;
-        this.spritesAnimados[key].animationSpeed = 0.1;
-         this.spritesAnimados[key].anchor.set(0.5,1)
-        
-
-        this.container.addChild(this.spritesAnimados[key]);
-
-
-    }
-
+  for (let key of Object.keys(anims)) {
+    const sp = new PIXI.AnimatedSprite(anims[key]);
+    sp.loop = true;
+    sp.animationSpeed = 0.1;
+    sp.anchor.set(0.5, 1);
+    sp.visible = false;              
+    this.spritesAnimados[key] = sp;
+    this.container.addChild(sp);
+  }
   
     
   }
@@ -83,55 +136,72 @@ class GameObject{
 
 
 
+tick(dt){
+  // reset
+  this.aceleracion.x = 0;
+  this.aceleracion.y = 0;
 
-  tick() {
-    this.aceleracion.x = 0;
-    this.aceleracion.y = 0;
+  this.aplicarComportamiento?.(dt);
 
-    this.escapar();
-    this.perseguir();
-    
-    this.multitud(this.juego.aliens);
-
+  if (!this._movedWithCollision) {
+    // integrar física básica
     this.limitarAceleracion();
     this.velocidad.x += this.aceleracion.x;
     this.velocidad.y += this.aceleracion.y;
 
-     //variaciones de la velocidad
+    this.rebotar();
+    this.aplicarFriccion();
+    this.limitarVelocidad();
 
-     this.rebotar();
-     this.aplicarFriccion();
-     this.limitarVelocidad();
-
-    //pixeles por frame
-    this.posicion.x += this.velocidad.x;
-    this.posicion.y += this.velocidad.y;
-
-    this.angulo = radianesAGrados(Math.atan2(this.velocidad.y, this.velocidad.x)) + 180;
-
-    this.cambiarDeSpriteAnimadoSegunAngulo()
-
-    this.render();
-
+    // SIEMPRE mover con colisión cuando exista el sistema de muros
+    if (this.juego?.hayColisionEntreMuroYAlien) {
+      this._moverConColision(dt);   // usa this.velocidad como desplazamiento
+      this._movedWithCollision = true;
+    } else {
+ 
+      this.posicion.x += this.velocidad.x;
+      this.posicion.y += this.velocidad.y;
     }
+  }
+
+
+   const evitaAutoAngulo =
+    this.fsm &&
+    (this.fsm.actual === 'AGGRESSIVE_WALL' ||
+     this.fsm.actual === 'AGGRESSIVE_PLAYER' ||
+     this.fsm.actual === 'DEAD');
+
+  if (!evitaAutoAngulo) {
+    const vx = this.velocidad.x, vy = this.velocidad.y;
+    const speed = Math.hypot(vx, vy);
+
+
+// sólo si realmente se mueve
+if (speed > 1.0) {                
+  this._lookAngle = Math.atan2(vy, vx);
+}
+// usa el último ángulo válido
+const look = this._lookAngle ?? 0;
+this.angulo = radianesAGrados(look) + 180;
+
+
+
+  
+}
+
+
+  this.cambiarDeSpriteAnimadoSegunAngulo?.();
+  this.render();
+
+  // reset flag para el próximo frame
+  this._movedWithCollision = false;
+
+}
 
     cambiarDeSpriteAnimadoSegunAngulo(){
     //0 grados es a la izq, abre en sentido horario, por lo cual 180 es a la derecha
     //90 es para arriba
     //270 abajo
-
-    if ((this.angulo > 315 && this.angulo < 360) || this.angulo < 45) {
-      this.cambiarAnimacion("caminarIzquierda");
-      this.spritesAnimados.caminarIzquierda.scale.x = 1;
-    } else if (this.angulo > 135 && this.angulo < 225) {
-      this.cambiarAnimacion("caminarIzquierda");
-      this.spritesAnimados.caminarIzquierda.scale.x = -1;
-    } else if (this.angulo < 135 && this.angulo > 45) {
-      this.cambiarAnimacion("caminarArriba");
-    } else {
-      this.cambiarAnimacion("caminarAbajo");
-    }
-
     
     }
 
@@ -151,12 +221,8 @@ class GameObject{
     }
 
      rebotar() {
-    //ejemplo mas realista
+
     if (this.posicion.x > this.juego.width || this.posicion.x < 0) {
-      //si la coordenada X de este conejito es mayor al ancho del stage,
-      //o si la coordenada X.. es menor q 0 (o sea q se fue por el lado izquierdo)
-      //multiplicamos por -0.99, o sea que se invierte el signo (si era positivo se hace negativo y vicecversa)
-      //y al ser 0.99 pierde 1% de velocidad
       this.velocidad.x *= -0.99;
     }
 
@@ -335,5 +401,14 @@ class GameObject{
     }
     return vectorDireccionDeseada;
   }
+
+  _moverConColision(dt){
+
+  this.posicion.x += this.velocidad.x;
+  this.posicion.y += this.velocidad.y;
+  this.bloqueado = false;
+  this.muroBloqueo = null;
+  this.puntoContacto = null;
+}
 
 }
