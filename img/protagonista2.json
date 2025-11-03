@@ -24,20 +24,20 @@
         "y": 0.5
       }
     },
-    "2.png": {
+    "frenteidle.png": {
       "frame": {
         "x": 0,
         "y": 54,
-        "w": 35,
-        "h": 43
+        "w": 24,
+        "h": 48
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 14,
-        "y": 10,
-        "w": 35,
-        "h": 43
+        "x": 19,
+        "y": 8,
+        "w": 24,
+        "h": 48
       },
       "sourceSize": {
         "w": 64,
@@ -48,7 +48,7 @@
         "y": 0.5
       }
     },
-    "7.png": {
+    "2.png": {
       "frame": {
         "x": 20,
         "y": 0,
@@ -72,10 +72,34 @@
         "y": 0.5
       }
     },
-    "6.png": {
+    "7.png": {
       "frame": {
         "x": 0,
-        "y": 97,
+        "y": 102,
+        "w": 35,
+        "h": 43
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 14,
+        "y": 10,
+        "w": 35,
+        "h": 43
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "6.png": {
+      "frame": {
+        "x": 24,
+        "y": 43,
         "w": 29,
         "h": 43
       },
@@ -99,7 +123,7 @@
     "3.png": {
       "frame": {
         "x": 0,
-        "y": 140,
+        "y": 145,
         "w": 32,
         "h": 42
       },
@@ -122,8 +146,8 @@
     },
     "1.png": {
       "frame": {
-        "x": 29,
-        "y": 97,
+        "x": 0,
+        "y": 187,
         "w": 23,
         "h": 42
       },
@@ -146,8 +170,8 @@
     },
     "5.png": {
       "frame": {
-        "x": 35,
-        "y": 43,
+        "x": 0,
+        "y": 229,
         "w": 22,
         "h": 42
       },
@@ -170,8 +194,8 @@
     },
     "4.png": {
       "frame": {
-        "x": 55,
-        "y": 0,
+        "x": 0,
+        "y": 271,
         "w": 19,
         "h": 42
       },
@@ -195,7 +219,7 @@
     "0.png": {
       "frame": {
         "x": 0,
-        "y": 182,
+        "y": 313,
         "w": 18,
         "h": 42
       },
@@ -218,24 +242,20 @@
     }
   },
 
-  "animations":{
-
-    "dispararArriba":["v2.0(1).png"],
-
-    "caminarDerecha" : ["0.png","1.png","2.png","3.png","4.png","5.png","6.png","7.png"]
-
+   "animations":{
+    "idle":["frenteidle.png"],
+    "caminarDerecha" : ["0.png","1.png","2.png","3.png","4.png","5.png","6.png","7.png"],
+    "dispararArriba":["v2.0 (1).png"]
   },
-
-
 
   "meta": {
     "app": "http://free-tex-packer.com",
     "version": "0.6.7",
-    "image": "protagonista.png",
+    "image": "protagonista2.png",
     "format": "RGBA8888",
     "size": {
-      "w": 74,
-      "h": 224
+      "w": 55,
+      "h": 355
     },
     "scale": 1
   }
