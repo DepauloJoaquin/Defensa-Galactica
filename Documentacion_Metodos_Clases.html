@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentación de Métodos - Proyecto de Juego</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 40px;
+            background-color: #f9f9f9;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            background-color: #2c3e50;
+            color: white;
+            border-radius: 10px;
+        }
+        .clase {
+            background-color: white;
+            margin-bottom: 30px;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .clase-titulo {
+            background-color: #3498db;
+            color: white;
+            padding: 15px;
+            margin: -20px -20px 20px -20px;
+            border-radius: 8px 8px 0 0;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .metodo {
+            margin-bottom: 20px;
+            border-left: 4px solid #3498db;
+            padding-left: 15px;
+        }
+        .metodo-nombre {
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+        .metodo-descripcion {
+            color: #555;
+            margin-bottom: 10px;
+        }
+        .metodo-uso {
+            background-color: #ecf0f1;
+            padding: 10px;
+            border-radius: 5px;
+            font-style: italic;
+            color: #7f8c8d;
+        }
+        .herencia {
+            background-color: #e8f5e8;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            border-left: 4px solid #27ae60;
+        }
+        .categoria {
+            background-color: #fff3cd;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            display: inline-block;
+            margin-bottom: 15px;
+            border: 1px solid #ffeaa7;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Documentación de Métodos y Clases</h1>
+        <h2>Proyecto de Juego de Torre Defense</h2>
+        <p><strong>Preparado para Defensa Oral</strong></p>
+        <p>Desarrollado en JavaScript con PIXI.js</p>
+    </div>
+
+    <div class="clase">
+        <div class="clase-titulo">GameObject (Clase Base)</div>
+        <div class="categoria">🎯 Clase Padre - Sistema de Entidades</div>
+        <div class="herencia">
+            <strong>Descripción:</strong> Clase base de la que heredan todas las entidades del juego. Maneja rendering, animaciones, física básica y colisiones.
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">constructor(textureData, x, y, juego)</div>
+            <div class="metodo-descripcion">Inicializa un nuevo objeto del juego. Crea el contenedor PIXI, establece posición inicial, carga animaciones y genera un ID único. También valida que las animaciones requeridas estén presentes.</div>
+            <div class="metodo-uso">Se ejecuta automáticamente al crear cualquier personaje, alien, muro, etc. Define las propiedades básicas de física y posicionamiento.</div>
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">cambiarAnimacion(cual)</div>
+            <div class="metodo-descripcion">Cambia la animación activa del personaje. Oculta la animación anterior, muestra la nueva y la reproduce desde el frame 0. Incluye sistema de fallback si la animación no existe.</div>
+            <div class="metodo-uso">Para la defensa: "Este método es crucial para dar vida visual a los personajes, permitiendo transiciones fluidas entre estados como caminar, atacar o estar idle."</div>
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">cargarSpritesAnimados(textureData)</div>
+            <div class="metodo-descripcion">Crea sprites animados a partir de los datos de textura JSON. Configura cada animación con velocidad, anclaje y visibilidad. Es la base del sistema de animaciones.</div>
+            <div class="metodo-uso">Se ejecuta en la construcción. Permite que cada personaje tenga múltiples animaciones (caminar, atacar, idle, etc.).</div>
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">tick(dt)</div>
+            <div class="metodo-descripcion">Método principal de actualización que se ejecuta cada frame. Resetea aceleración, aplica comportamientos, integra física, maneja colisiones, actualiza orientación y renderiza el objeto.</div>
+            <div class="metodo-uso">Para la defensa: "Es el corazón del motor de juego. Cada entidad ejecuta este método 60 veces por segundo, creando la ilusión de movimiento y interacción."</div>
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">limitarAceleracion() / limitarVelocidad()</div>
+            <div class="metodo-descripcion">Aplican limitaciones físicas realistas. Evitan que los personajes aceleren o se muevan más rápido de lo permitido, manteniendo el balance del juego.</div>
+            <div class="metodo-uso">Asegura que todos los personajes respeten las reglas físicas definidas para cada tipo.</div>
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">aplicarFriccion()</div>
+            <div class="metodo-descripción">Simula el rozamiento natural. Reduce gradualmente la velocidad cuando no hay aceleración, creando un movimiento más realista.</div>
+            <div class="metodo-uso">Evita que los personajes se deslicen infinitamente, similar a la fricción en el mundo real.</div>
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">rebotar()</div>
+            <div class="metodo-descripción">Maneja colisiones con los bordes del mapa. Invierte y reduce la velocidad al chocar con los límites, evitando que los personajes salgan del área de juego.</div>
+            <div class="metodo-uso">Sistema de contención que mantiene a todas las entidades dentro del área jugable.</div>
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">render()</div>
+            <div class="metodo-descripción">Actualiza la posición visual del objeto en pantalla. Sincroniza la posición lógica con la representación gráfica y ajusta el z-index para el orden de renderizado.</div>
+            <div class="metodo-uso">Se ejecuta cada frame para mantener la coherencia entre la lógica del juego y lo que ve el jugador.</div>
+        </div>
+    </div>
+
+    <div class="clase">
+        <div class="clase-titulo">Alien (Enemigo Principal)</div>
+        <div class="categoria">👾 Entidad Enemiga - Inteligencia Artificial</div>
+        <div class="herencia">
+            <strong>Hereda de:</strong> GameObject<br>
+            <strong>Descripción:</strong> Enemigos inteligentes con comportamiento de manada, máquina de estados finitos (FSM) y capacidad de combate.
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">constructor(texture, x, y, juego)</div>
+            <div class="metodo-descripción">Inicializa un alien con propiedades de combate, rangos de detección, velocidades variables y estados de comportamiento. Configura el FSM con todos los estados posibles.</div>
+            <div class="metodo-uso">Para la defensa: "Cada alien es un agente inteligente que puede tomar decisiones autónomas basadas en su entorno y estado actual."</div>
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">aplicarComportamiento()</div>
+            <div class="metodo-descripción">Ejecuta comportamientos basados en el estado actual del FSM. En estados de patrulla, aplica algoritmos de manada (boids). Busca obstáculos cercanos y coordina con otros aliens.</div>
+            <div class="metodo-uso">Sistema de IA que permite comportamientos emergentes complejos a partir de reglas simples.</div>
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">alinear(aliens)</div>
+            <div class="metodo-descripción">Algoritmo de boids para alineación. Hace que el alien oriente su movimiento en la misma dirección que sus vecinos cercanos, creando movimientos coordinados de grupo.</div>
+            <div class="metodo-uso">Para la defensa: "Implementa uno de los tres pilares del comportamiento de manada, creando formaciones naturales de enemigos."</div>
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">cohesion(aliens)</div>
+            <div class="metodo-descripción">Algoritmo de boids para cohesión. Atrae al alien hacia el centro de masa de sus vecinos, manteniendo a los grupos unidos sin dispersarse.</div>
+            <div class="metodo-uso">Evita que los aliens se separen demasiado, manteniendo la amenaza grupal para el jugador.</div>
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">separacion(aliens)</div>
+            <div class="metodo-descripción">Algoritmo de boids para separación. Empuja al alien lejos de vecinos muy cercanos, evitando aglomeraciones y colisiones entre aliens.</div>
+            <div class="metodo-uso">Mantiene distancias individuales mientras preserva el comportamiento de grupo.</div>
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">multitud(unosAliens)</div>
+            <div class="metodo-descripción">Combina los tres algoritmos de boids (alinear, cohesión, separación) con pesos específicos. Crea el comportamiento final de manada aplicando todas las fuerzas simultáneamente.</div>
+            <div class="metodo-uso">Para la defensa: "Este método demuestra cómo comportamientos complejos emergen de reglas simples, un principio fundamental en IA de juegos."</div>
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">moverHaciaJugador(dt, vel)</div>
+            <div class="metodo-descripción">Movimiento dirigido hacia el protagonista. Calcula la dirección óptima, orienta al alien y aplica velocidad constante. Incluye manejo de colisiones durante el movimiento.</div>
+            <div class="metodo-uso">Usado en estados agresivos cuando el alien decide atacar directamente al jugador.</div>
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">recibirDaño(cantidad)</div>
+            <div class="metodo-descripción">Sistema de combate que reduce la vida, aplica efectos visuales de daño (parpadeo) y maneja la muerte cuando la vida llega a cero.</div>
+            <div class="metodo-uso">Permite interacción de combate entre aliens y torres/jugador, con feedback visual inmediato.</div>
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">morir()</div>
+            <div class="metodo-descripción">Maneja la muerte del alien: otorga puntos y recursos al jugador, remueve la entidad de todas las listas del juego y limpia la memoria destruyendo sprites.</div>
+            <div class="metodo-uso">Sistema de recompensas que incentiva al jugador a eliminar enemigos, y gestión de memoria para evitar lag.</div>
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">buscarObstaculosCerca()</div>
+            <div class="metodo-descripción">Detecta muros y obstáculos en el entorno inmediato. Diferencia entre obstáculos cercanos y obstáculos con los que ya está colisionando. Fundamental para navegación inteligente.</div>
+            <div class="metodo-uso">Permite que los aliens naveguen alrededor de obstáculos y detecten cuando están bloqueados.</div>
+        </div>
+    </div>
+
+    <div class="clase">
+        <div class="clase-titulo">PersonajePPal (Protagonista)</div>
+        <div class="categoria">🎮 Entidad Controlable - Jugador</div>
+        <div class="herencia">
+            <strong>Hereda de:</strong> GameObject<br>
+            <strong>Descripción:</strong> Personaje controlado por el jugador con sistema de entrada, animaciones direccionales y sistema de vida.
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">constructor(textureData, x, y, juego)</div>
+            <div class="metodo-descripción">Inicializa el protagonista con vida máxima, animación idle por defecto y propiedades específicas del personaje controlable.</div>
+            <div class="metodo-uso">Crea el avatar del jugador con características diferenciadas de los NPCs.</div>
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">aplicarComportamiento()</div>
+            <div class="metodo-descripción">Procesa la entrada del teclado (WASD/flechas) y la convierte en aceleración. Maneja movimiento en ocho direcciones y determina la animación apropiada según el movimiento.</div>
+            <div class="metodo-uso">Para la defensa: "Este método traduce las intenciones del jugador en acciones del personaje, siendo el puente entre el usuario y el mundo del juego."</div>
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">cambiarDeSpriteAnimadoSegunAngulo()</div>
+            <div class="metodo-descripción">Controla las animaciones basadas en el movimiento. Cambia entre 'idle' y 'caminarDerecha', aplicando espejado horizontal para simular movimiento hacia izquierda o derecha.</div>
+            <div class="metodo-uso">Proporciona feedback visual del estado del personaje al jugador.</div>
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">recibirDaño(cant)</div>
+            <div class="metodo-descripción">Sistema de combate del jugador. Reduce vida, aplica efectos visuales de daño y maneja la condición de derrota cuando la vida llega a cero.</div>
+            <div class="metodo-uso">Crea tensión en el gameplay al poner en riesgo al jugador durante el combate.</div>
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">morir()</div>
+            <div class="metodo-descripción">Maneja la muerte del protagonista, cambiando el estado a muerto y notificando al juego para mostrar la pantalla de derrota.</div>
+            <div class="metodo-uso">Trigger para el estado de "Game Over" que termina la partida actual.</div>
+        </div>
+    </div>
+
+    <div class="clase">
+        <div class="clase-titulo">Torreta (Torre Defensiva)</div>
+        <div class="categoria">🏗️ Entidad Defensiva - Automatizada</div>
+        <div class="herencia">
+            <strong>Descripción:</strong> Torres automáticas que detectan y atacan enemigos dentro de su rango de visión cónico.
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">constructor(juego, x, y, texturaId)</div>
+            <div class="metodo-descripción">Crea una torreta defensiva con sprite, sombra, área de visión cónica, estadísticas de combate y eventos de interacción (click derecho para destruir).</div>
+            <div class="metodo-uso">Para la defensa: "Las torretas representan el elemento estratégico principal del tower defense, requiriendo posicionamiento táctico del jugador."</div>
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">update(dt)</div>
+            <div class="metodo-descripción">Actualización principal de la torreta: gestiona enfriamiento de disparo, busca objetivos, rota hacia enemies, ejecuta ataques y mantiene el cono de visión actualizado.</div>
+            <div class="metodo-uso">Cerebro de la torreta que opera autónomamente una vez colocada por el jugador.</div>
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">buscarObjetivo()</div>
+            <div class="metodo-descripción">Algoritmo de targeting que encuentra el enemigo más cercano dentro del cono de visión. Prioriza por distancia y valida que esté dentro del alcance angular.</div>
+            <div class="metodo-uso">Sistema de IA defensiva que permite a las torretas operar independientemente.</div>
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">objetivoValido()</div>
+            <div class="metodo-descripción">Valida si el objetivo actual sigue siendo atacable: verifica que esté vivo, dentro del rango y dentro del cono de visión.</div>
+            <div class="metodo-uso">Evita que las torretas desperdicien disparos en objetivos inalcanzables o muertos.</div>
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">girarHacia(anguloObjetivo, dt)</div>
+            <div class="metodo-descripción">Rotación suave hacia un ángulo objetivo. Calcula la diferencia angular más corta y aplica velocidad de giro limitada para movimiento realista.</div>
+            <div class="metodo-uso">Crea animación fluida de tracking que hace las torretas más creíbles visualmente.</div>
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">disparar(xObjetivo, yObjetivo)</div>
+            <div class="metodo-descripción">Crea un láser visual temporal hacia el objetivo, aplica daño al enemy y maneja la limpieza del efecto gráfico. Incluye validación del objetivo.</div>
+            <div class="metodo-uso">Para la defensa: "Combina feedback visual inmediato con mecánicas de combate efectivas, creando satisfacción en el jugador."</div>
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">dibujarCono()</div>
+            <div class="metodo-descripción">Renderiza el área de visión cónica con relleno translúcido y borde. Actualiza la rotación del cono para seguir la orientación de la torreta.</div>
+            <div class="metodo-uso">Proporciona feedback visual al jugador sobre el área efectiva de cada torreta.</div>
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">recibirDaño(cantidad) / destruir()</div>
+            <div class="metodo-descripción">Sistema de destrucción de torretas. Recibes damage aplica efectos visuales, mientras que destruir() limpia completamente la torreta del juego y libera memoria.</div>
+            <div class="metodo-uso">Permite que las torretas sean vulnerables, añadiendo tensión estratégica al juego.</div>
+        </div>
+    </div>
+
+    <div class="clase">
+        <div class="clase-titulo">Muro (Estructura Defensiva)</div>
+        <div class="categoria">🧱 Entidad Estática - Defensa Pasiva</div>
+        <div class="herencia">
+            <strong>Hereda de:</strong> GameObject<br>
+            <strong>Descripción:</strong> Estructuras estáticas que bloquean el movimiento de enemigos y pueden ser destruidas tras recibir suficiente daño.
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">constructor(texture, x, y, juego)</div>
+            <div class="metodo-descripción">Crea una estructura defensiva estática con alta resistencia, sprite escalado y sin capacidad de movimiento. Se registra en las listas de muros y obstáculos.</div>
+            <div class="metodo-uso">Permite al jugador crear barreras para canalizar el movimiento de los enemigos.</div>
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">cajaAlineadaAEjesMuro()</div>
+            <div class="metodo-descripción">Calcula los límites de colisión del muro. Retorna un rectángulo que define el área ocupada por la estructura para cálculos de colisión.</div>
+            <div class="metodo-uso">Fundamental para el sistema de colisiones y navegación de los enemigos.</div>
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">tick()</div>
+            <div class="metodo-descripción">Actualización mínima que maneja efectos visuales de daño (parpadeo) cuando el muro ha recibido impactos recientes.</div>
+            <div class="metodo-uso">Proporciona feedback visual cuando los muros están bajo ataque.</div>
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">recibirDaño(cant)</div>
+            <div class="metodo-descripción">Reduce la resistencia del muro y activa efectos visuales de daño. Si la resistencia llega a cero, destruye el muro completamente.</div>
+            <div class="metodo-uso">Hace que las defensas sean vulnerables, requiriendo que el jugador las mantenga y reemplace.</div>
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">morir()</div>
+            <div class="metodo-descripción">Destrucción completa del muro: lo remueve del escenario visual, de todas las listas del juego y notifica si era la base principal para activar condiciones de derrota.</div>
+            <div class="metodo-uso">Para la defensa: "La destrucción de muros puede cambiar completamente la estrategia del nivel, especialmente si es la base principal."</div>
+        </div>
+    </div>
+
+    <div class="clase">
+        <div class="clase-titulo">Juego (Motor Principal)</div>
+        <div class="categoria">🎮 Controlador Central - Game Engine</div>
+        <div class="herencia">
+            <strong>Descripción:</strong> Clase principal que coordina todos los sistemas del juego: rendering, input, physics, spawning, UI y game loop.
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">constructor()</div>
+            <div class="metodo-descripción">Inicializa el motor de juego: configura dimensiones, sistema de input, variables de estado, contadores de oleadas y sistemas de disparo del jugador.</div>
+            <div class="metodo-uso">Para la defensa: "Actúa como el director de orquesta, coordinando todos los sistemas para crear la experiencia completa del juego."</div>
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">initPixi()</div>
+            <div class="metodo-descripción">Inicialización del motor gráfico PIXI.js: crea la aplicación, configura el canvas, carga assets, crea el nivel inicial y preload recursos necesarios.</div>
+            <div class="metodo-uso">Establece toda la infraestructura visual y prepara el contenido inicial del juego.</div>
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">setupKeyboard()</div>
+            <div class="metodo-descripción">Configura el sistema de entrada por teclado, registrando event listeners para keydown y keyup. Mantiene un estado global de teclas presionadas.</div>
+            <div class="metodo-uso">Permite control responsive del protagonista y comandos del juego como pausa, zoom, etc.</div>
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">crearNivel()</div>
+            <div class="metodo-descripción">Genera el contenido del nivel: carga texturas de fondo, crea estructuras base, posiciona el protagonista y establececontainers de organización visual.</div>
+            <div class="metodo-uso">Define la estructura inicial del nivel donde se desarrollará la partida.</div>
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">gameLoop(dt)</div>
+            <div class="metodo-descripción">Bucle principal que ejecuta cada frame: actualiza todas las entidades, procesa colisiones, maneja spawning de enemies, actualiza UI y gestiona estados del juego.</div>
+            <div class="metodo-uso">Para la defensa: "El corazón que late del juego - sin este bucle, nada se movería ni interactuaría. Se ejecuta 60 veces por segundo."</div>
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">spawnWave(cantidad)</div>
+            <div class="metodo-descripción">Genera oleadas de enemigos en posiciones aleatorias del borde del mapa. Controla la progresión de dificultad y mantiene la presión sobre el jugador.</div>
+            <div class="metodo-uso">Sistema de progresión que incrementa la dificultad y mantiene el gameplay dinámico.</div>
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">manejarDisparo()</div>
+            <div class="metodo-descripción">Procesa el input de disparo del jugador (click izquierdo), maneja rate of fire, crea proyectiles y gestiona el sistema de munición del protagonista.</div>
+            <div class="metodo-uso">Permite al jugador defenderse activamente, complementando las torres automáticas.</div>
+        </div>
+    </div>
+
+    <div class="clase">
+        <div class="clase-titulo">FSM - Finite State Machine</div>
+        <div class="categoria">🤖 Sistema de IA - Comportamientos</div>
+        <div class="herencia">
+            <strong>Descripción:</strong> Máquina de estados finitos que controla el comportamiento inteligente de los aliens según las circunstancias del juego.
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">añadir(nombre, instancia)</div>
+            <div class="metodo-descripción">Registra un nuevo estado en la máquina. Establece referencias bidireccionales entre el estado, la FSM y el personaje que controla.</div>
+            <div class="metodo-uso">Permite arquitectura modular donde cada comportamiento (idle, attacking, etc.) es una clase separada.</div>
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">setear(nombre)</div>
+            <div class="metodo-descripción">Transición entre estados: ejecuta métodos de salida del estado anterior, actualiza el estado actual y ejecuta métodos de entrada del nuevo estado.</div>
+            <div class="metodo-uso">Para la defensa: "Permite que los aliens cambien de comportamiento dinámicamente según lo que perciben en el entorno."</div>
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">update(dt)</div>
+            <div class="metodo-descripción">Ejecuta la lógica del estado actual cada frame. Permite que cada estado tome decisiones y potencialmente triggeree transiciones a otros estados.</div>
+            <div class="metodo-uso">Motor de la IA que permite comportamientos complejos y adaptativos.</div>
+        </div>
+    </div>
+
+    <div class="clase">
+        <div class="clase-titulo">Estados del FSM</div>
+        <div class="categoria">🎯 Comportamientos IA - Estados Específicos</div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">EstadoIdle</div>
+            <div class="metodo-descripción">Estado pasivo donde los aliens patrullan con comportamiento de manada. Vigilan el entorno buscando jugador o torres. Transiciona a estados más agresivos al detectar amenazas.</div>
+            <div class="metodo-uso">Estado base que mantiene a los aliens activos pero no agresivos.</div>
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">EstadoAware</div>
+            <div class="metodo-descripción">Estado de alerta inicial cuando detectan al jugador a distancia. Se mueven lentamente hacia la amenaza y pueden escalar a más agresividad o regresar a idle.</div>
+            <div class="metodo-uso">Estado intermedio que permite escalación gradual de la amenaza.</div>
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">EstadoAggressive</div>
+            <div class="metodo-descripción">Estados de combate activo donde los aliens atacan directamente al jugador, torretas o muros. Incluye comportamiento de ataque con cooldowns y damage.</div>
+            <div class="metodo-uso">Para la defensa: "Estos estados crean la presión principal del gameplay, forzando al jugador a tomar decisiones tácticas rápidas."</div>
+        </div>
+    </div>
+
+    <div class="clase">
+        <div class="clase-titulo">OperacionesUtiles</div>
+        <div class="categoria">🔧 Utilidades - Matemáticas y Física</div>
+        <div class="herencia">
+            <strong>Descripción:</strong> Funciones matemáticas y de utilidad que soportan todos los cálculos de física, geometría y navegación del juego.
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">calcularDistancia(obj1, obj2)</div>
+            <div class="metodo-descripción">Calcula la distancia euclidiana entre dos puntos usando el teorema de Pitágoras. Fundamental para detección de proximidad y colisiones.</div>
+            <div class="metodo-uso">Usado constantemente para rangos de ataque, detección de enemies y comportamiento de manada.</div>
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">limitarVector(vector, magnitudMaxima)</div>
+            <div class="metodo-descripción">Limita la magnitud de un vector manteniendo su dirección. Escala proporcionalmente si excede el límite máximo permitido.</div>
+            <div class="metodo-uso">Para la defensa: "Esencial para mantener velocidades y aceleraciones realistas, evitando que los personajes se muevan demasiado rápido."</div>
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">setearMagnitudAVector(vector, nuevaMagnitud)</div>
+            <div class="metodo-descripción">Cambia la magnitud de un vector a un valor específico manteniendo la dirección original. Incluye validación para evitar división por cero.</div>
+            <div class="metodo-uso">Permite movimiento a velocidad constante en cualquier dirección.</div>
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">anguloHacia(x1, y1, x2, y2)</div>
+            <div class="metodo-descripción">Calcula el ángulo en radianes desde un punto hacia otro usando atan2. Fundamental para orientación y navegación direccional.</div>
+            <div class="metodo-uso">Usado para que personajes y torretas miren hacia sus objetivos.</div>
+        </div>
+
+        <div class="metodo">
+            <div class="metodo-nombre">deltaAng(a, b)</div>
+            <div class="metodo-descripción">Calcula la diferencia mínima entre dos ángulos, manejando correctamente el wraparound de 360°. Optimizado para comparaciones de orientación.</div>
+            <div class="metodo-uso">Permite detección precisa de si un objetivo está dentro del cono de visión de una torreta.</div>
+        </div>
+    </div>
+
+    <div class="clase">
+        <div class="clase-titulo">Conclusión para la Defensa</div>
+        <div class="categoria">🎯 Síntesis del Proyecto</div>
+        
+        <div class="metodo">
+            <div class="metodo-nombre">Arquitectura General del Sistema</div>
+            <div class="metodo-descripción">
+                <strong>Patrón de Herencia:</strong> GameObject como clase base proporciona funcionalidad común (física, rendering, animaciones) que heredan todas las entidades específicas.<br><br>
+                <strong>Separación de Responsabilidades:</strong> Cada clase tiene un propósito claro - Juego como controlador central, entidades como agentes autónomos, utilidades como soporte matemático.<br><br>
+                <strong>Sistemas Emergentes:</strong> Los comportamientos complejos emergen de la interacción entre sistemas simples (FSM + boids + física = aliens inteligentes).
+            </div>
+            <div class="metodo-uso">
+                <strong>Para la defensa oral:</strong> "Este proyecto demuestra principios sólidos de ingeniería de software aplicados a game development: 
+                herencia para reutilización de código, polimorfismo para comportamientos especializados, y sistemas modulares que trabajan juntos 
+                para crear una experiencia de juego fluida y engaging."
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,11 +1,12 @@
 class Torreta {
-  constructor(juego, x, y, texturaId) {
-    this.juego = juego;
+  constructor(mundo, x, y, texturaId) {
+    this.mundo = mundo;
+    this.juego = mundo.juego;
     this.vivo = true;
     this.vida = 120;
 
     // Asumimos que casi siempre hay textura; si no, fallback rápido con ||
-    const textura = (juego.torretasTextures && juego.torretasTextures[texturaId]) || PIXI.Texture.WHITE;
+    const textura = (this.juego &&  this.juego.torretasTextures && this.juego.torretasTextures[texturaId])|| PIXI.Texture.WHITE;
 
     this.container = new PIXI.Container();
     this.container.position.set(x, y);
@@ -34,12 +35,15 @@ class Torreta {
     this.rotacionBase = -Math.PI / 2;
     this.objetivo = null;
     this.tiempoBuscar = 0;
+  // Guardar orientación inicial de descanso en ángulo de mundo
+  // (sprite.rotation + rotacionBase) representa el ángulo “real” al que mira la torreta
+  this.restWorldAngle = this.sprite.rotation + this.rotacionBase;
 
     this.container.eventMode = 'static';
     this.container.cursor = 'crosshair';
     this.container.on('rightclick', () => this.destruir());
 
-    juego.torretas.push(this);
+   this.mundo.torretas.push(this);
   }
 
   update(dt) {
@@ -67,6 +71,10 @@ class Torreta {
         this.disparar(ox, oy);
         this.enfriamiento = 1 / this.ataquesPorSegundo;
       }
+    } else {
+      // Sin objetivo: volver suavemente a la orientación original (ángulo de mundo)
+      const target = this.restWorldAngle;
+      this.girarHacia(target, dt * 0.5);
     }
 
     this.container.zIndex = this.container.y;
@@ -132,14 +140,24 @@ class Torreta {
   }
 
   girarHacia(anguloObjetivo, dt) {
+    // Calculamos el ángulo actual sumando la rotación del sprite y una rotación base
     let actual = this.sprite.rotation + this.rotacionBase;
+     // Diferencia entre el ángulo al que queremos mirar y el ángulo actual
     let dif = anguloObjetivo - actual;
-
+     // Normalizamos la diferencia para que esté entre -PI y PI (evita giros raros de más de 180°)
     while (dif > Math.PI) dif -= Math.PI * 2;
+    // Lo mismo pero para el otro lado (si es menor que -PI)
     while (dif < -Math.PI) dif += Math.PI * 2;
-
+     // Calculamos cuánto puede girar como máximo en este frame (velocidad * tiempo)
     const paso = this.velocidadGiro * dt;
-    actual = Math.abs(dif) <= paso ? anguloObjetivo : actual + Math.sign(dif) * paso;
+
+     // Si la diferencia es menor o igual al paso, ponemos directamente el ángulo objetivo
+    if (Math.abs(dif) <= paso) {
+  actual = anguloObjetivo;
+  } else {
+    // Si no, avanzamos solo un "paso" en la dirección correcta (positiva o negativa)
+  actual = actual + Math.sign(dif) * paso;
+}    // Actualizamos la rotación real del sprite restando la rotación base
     this.sprite.rotation = actual - this.rotacionBase;
   }
 
@@ -167,7 +185,7 @@ class Torreta {
 
     // Asumimos objetivo válido; chequeo mínimo
     if (this.objetivo && this.objetivo.vivo) {
-      this.objetivo.recibirDaño?.(this.daño);
+      this.objetivo.recibirDaño(this.daño);
       if (!this.objetivo.vivo) this.objetivo = null;
     }
   }
@@ -189,6 +207,7 @@ class Torreta {
     }
 
     this.container.destroy();
+    this.mundo.torretas = this.mundo.torretas.filter(t => t !== this);
     this.juego.torretas = this.juego.torretas.filter(t => t !== this);
   }
 }

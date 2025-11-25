@@ -1,75 +1,57 @@
 <html>
-
-
 <head>
+  <style>
+    body { margin: 0; }
+  </style>
 
-    <style>
-       body {
-            margin: 0px
-        }
+  <!-- Utils -->
+  <script src="OperacionesUtiles.js"></script>
 
+  <!-- Pixi -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/8.13.2/pixi.min.js"></script>
+  <!-- TilingSprite -->
+  <script src="https://unpkg.com/@pixi/sprite-tiling@8.13.2/dist/browser/sprite-tiling.min.js"></script>
 
+  <!-- Config -->
+  <script src="config.js"></script>
 
+  <!-- FSM y Estados -->
+  <script src="fsm/FSM.js"></script>
+  <script src="fsm/Estado.js"></script>
+  <script src="fsm/EstadoIdle.js"></script>
+  <script src="fsm/EstadoAware.js"></script>
+  <script src="fsm/EstadoIntrigado.js"></script>
+  <script src="fsm/EstadoAlerta.js"></script>
+  <script src="fsm/EstadoAggressiveWall.js"></script>
+  <script src="fsm/EstadoAggressivePlayer.js"></script>
+  <script src="fsm/EstadoAggressiveTurret.js"></script>
+  <script src="fsm/EstadoDead.js"></script>
 
+  <!-- Base y entidades -->
+  <script src="gameObject.js"></script>
+  <script src="EntidadEstatica.js"></script>
+  <script src="ErizoCheco.js"></script>
+  <script src="muro.js"></script>
+  <script src="PersonajePPal.js"></script>
+  <script src="Alien.js"></script>
+  <script src="torreta.js"></script>
 
-    </style>
+  <!-- Mundo + input + UI + oleadas -->
+  <script src="mundo.js"></script>
+  <script src="inputManager.js"></script>
+  <script src="uiManager.js"></script>
+  <script src="waveManager.js"></script>
 
-    <!-- importo las operaciones Mat-->
-     <script src = "OperacionesUtiles.js" ></script>
-
-    <!-- importo Pixi-->
-
-    <script src = "https://cdnjs.cloudflare.com/ajax/libs/pixi.js/8.13.2/pixi.min.js"></script>
-
-    <!-- FSM y Estados  -->
-    <script src="fsm/FSM.js"></script>
-    <script src="fsm/Estado.js"></script>
-    <script src="fsm/EstadoIdle.js"></script>
-    <script src="fsm/EstadoAware.js"></script>
-    <script src="fsm/EstadoIntrigado.js"></script>
-    <script src="fsm/EstadoAlerta.js"></script>
-    <script src="fsm/EstadoAggressiveWall.js"></script>
-    <script src="fsm/EstadoAggressivePlayer.js"></script>
-    <script src = "fsm/EstadoAggressiveTurret.js"></script>
-    <script src="fsm/EstadoDead.js"></script>
-    
-    
-
-
-    <!-- Base y entidades -->
-    <script src="gameObject.js"></script>
-    <script src="EntidadEstatica.js"></script>
-    <script src="ErizoCheco.js"></script>
-    <script src="muro.js"></script>
-    <script src="PersonajePPal.js"></script>
-    <script src="Alien.js"></script>
-    <script src="torreta.js"></script>
-
-
-    <!-- Juego -->
-    <script src="juego.js"></script>
-
-
-    
-    <script src="https://unpkg.com/@pixi/sprite-tiling@8.13.2/dist/browser/sprite-tiling.min.js"></script>
-
-
+  <!-- Juego -->
+  <script src="juego.js"></script>
 </head>
 
 <body>
-
-    <script>
-            
-        // todo empieza aca (Entry Point).
-        // creamos una instancia de la clase juego
-
-        const juego = new Juego()
-
-
-
-    </script>
-
-
+  <script>
+    window.addEventListener('load', async () => {
+      const juego = new Juego();
+      await juego.initPixi();
+    });
+  </script>
 </body>
-
 </html>
